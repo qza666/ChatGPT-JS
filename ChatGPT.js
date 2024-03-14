@@ -2,7 +2,7 @@
 // @name               ChatGPT-Hydrotho & 亦安
 // @name:zh-CN         ChatGPT-Hydrotho & 亦安
 // @namespace          https://github.com/hydrotho
-// @version            2.1.7
+// @version            2.1.8
 // @description:zh-CN  通过Hydrotho大佬提供的模型切换器来破解GPT-4.0的频率限制再结合我的自定义角色，实现自定义角色破解4.0的限制。
 // @author             Hydrotho & 亦安
 // @license            MIT
@@ -16,9 +16,10 @@
 // @downloadURL https://update.greasyfork.org/scripts/489458/ChatGPT-Hydrotho%20%20%E4%BA%A6%E5%AE%89.user.js
 // @updateURL https://update.greasyfork.org/scripts/489458/ChatGPT-Hydrotho%20%20%E4%BA%A6%E5%AE%89.meta.js
 // ==/UserScript==
+
 (function () {
     'use strict';
-    if (document.querySelector('#integratedChatGPTUI')) return;
+    if (document.querySelector('#integratedChatGPTUIContainer')) return;
 
     var SHORTCUTS = JSON.parse(localStorage.getItem('SHORTCUTS')) || [
         ["中韩互译", "Yian is a translation AI specially designed for translating between Chinese and Korean. When provided with Chinese text, it translates it into Korean, and vice versa. It combines translation capabilities with a deep understanding of culture, ensuring that translations not only accurately convert text but also capture the unique contexts, idioms, and nuances of each language. It emphasizes cultural sensitivity, providing professional cross-cultural communication guidance to ensure that translations take into account the target market's culture, customs, and preferences, achieving true localization. By deeply analyzing linguistic and cultural backgrounds, Yian acts not merely as a translator of languages but as a bridge connecting different cultural worlds, facilitating global communication and understanding. Yian returns only translation results, without any explanations.Below is the text you need to translate:\n\n"],
@@ -34,112 +35,116 @@
         localStorage.setItem('SHORTCUTS', JSON.stringify(SHORTCUTS));
     }
 
-    var expandedUI = document.createElement('div');
-    expandedUI.id = 'integratedChatGPTUI';
-    expandedUI.style.cssText = `
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #f9f9f9;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #323130;
-        z-index: 9999;
-        text-align: center;
-        max-height: 80vh;
-        overflow-y: auto;
-        width: auto;
-        max-width: 90%;
-    `;
-
-    document.body.appendChild(expandedUI);
-
-    function updateUI() {
-        expandedUI.innerHTML = '';
-        var grid = document.createElement('div');
-        grid.style.display = 'grid';
-        grid.style.gridTemplateColumns = 'repeat(3, minmax(120px, 1fr))';
-        grid.style.gap = '10px';
-        SHORTCUTS.forEach(function(shortcut, index) {
-            var shortcutItem = document.createElement('div');
-            shortcutItem.style.cssText = `
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background-color: #e1e1e1;
-                padding: 10px;
-                border-radius: 5px;
-            `;
-            var text = document.createElement('span');
-            text.textContent = shortcut[0];
-            shortcutItem.appendChild(text);
-
-            var deleteBtn = document.createElement('span');
-            deleteBtn.innerHTML = '&times;';
-            deleteBtn.style.cssText = 'cursor: pointer; color: red; margin-left: 10px;';
-            deleteBtn.onclick = function (event) {
-                event.stopPropagation();
-                SHORTCUTS.splice(index, 1);
-                updateUI();
-                saveShortcuts();
-            };
-            shortcutItem.appendChild(deleteBtn);
-
-            shortcutItem.onclick = function () {
-                var textarea = document.querySelector('textarea');
-                if (textarea) {
-                    textarea.value = shortcut[1] + textarea.value.replace(/^ {3}/, ''); // Remove leading three spaces and prepend content
-                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
-                    expandedUI.style.display = 'none'; // Hide UI after clicking a shortcut
-                    
-                    // Scroll to the bottom of the textarea to ensure the user sees the added content
-                    textarea.scrollTop = textarea.scrollHeight;
-                }
-            };
-            grid.appendChild(shortcutItem);
+    function refreshDropdown() {
+        // Clear all options except the placeholder
+        for (let i = expandedUI.options.length - 1; i > 0; i--) {
+            expandedUI.remove(i);
+        }
+        // Re-add shortcuts to the dropdown
+        SHORTCUTS.forEach(function(shortcut) {
+            var option = new Option(shortcut[0], shortcut[0]);
+            expandedUI.add(option);
         });
-        expandedUI.appendChild(grid);
     }
 
-    updateUI();
+    var uiContainer = document.createElement('div');
+    uiContainer.id = 'integratedChatGPTUIContainer';
+    uiContainer.style.cssText = `
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px 20px;
+        background-color: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 10000;
+    `;
 
-    document.addEventListener('input', function(e) {
-        if (e.target.tagName.toLowerCase() === 'textarea') {
-            var textareaValue = e.target.value;
-            expandedUI.style.display = textareaValue.endsWith('   ') ? 'block' : 'none';
-        }
+    var expandedUI = document.createElement('select');
+    expandedUI.id = 'integratedChatGPTUI';
+    expandedUI.style.cssText = `
+        padding: 5px 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+    `;
+
+    var placeholderOption = new Option('选择快捷方式...', '', true, true);
+    placeholderOption.disabled = true;
+    expandedUI.add(placeholderOption);
+
+    SHORTCUTS.forEach(function(shortcut) {
+        var option = new Option(shortcut[0], shortcut[0]);
+        expandedUI.add(option);
     });
+
+    var addButton = document.createElement('button');
+    addButton.textContent = '添加';
+    addButton.style.cssText = `
+        background-color: #007bff;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    `;
+    addButton.onclick = function() {
+        var title = prompt('给设定取个名字:');
+        var content = prompt('ChatGPT要扮演的角色设定信息:');
+        if (title && content) {
+            SHORTCUTS.push([title, content]);
+            saveShortcuts();
+            refreshDropdown();
+        }
+    };
+
+    var deleteButton = document.createElement('button');
+    deleteButton.textContent = '删除';
+    deleteButton.style.cssText = `
+        background-color: #dc3545;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    `;
+    deleteButton.onclick = function() {
+        var selectedShortcutIndex = expandedUI.selectedIndex - 1;
+        if (selectedShortcutIndex >= 0) {
+            SHORTCUTS.splice(selectedShortcutIndex, 1);
+            saveShortcuts();
+            refreshDropdown();
+        } else {
+            alert('请选择一个要删除的快捷方式');
+        }
+    };
+
+    uiContainer.appendChild(expandedUI);
+    uiContainer.appendChild(addButton);
+    uiContainer.appendChild(deleteButton);
+    document.body.appendChild(uiContainer);
 
     document.addEventListener('keydown', function(e) {
-        if (e.key === '+' || (e.shiftKey && e.key === '=')) {
-            e.preventDefault();
-            var lastShortcut = SHORTCUTS[SHORTCUTS.length - 1];
-            if (lastShortcut) {
-                var textarea = document.querySelector('textarea');
-                if (textarea) {
-                    textarea.value = lastShortcut[1] + textarea.value.replace(/^ {3}/, ''); // Remove leading three spaces and prepend content
-                    textarea.dispatchEvent(new Event('input', { bubbles: true }));
-                    // Ensure the textarea scrolls to the bottom
-                    textarea.scrollTop = textarea.scrollHeight;
-                }
-            }
-        }
-    });
+        if (e.key === '.' && document.activeElement.tagName === 'TEXTAREA') {
+            e.preventDefault(); // Prevent the default dot key action.
 
-    document.addEventListener('input', function(e) {
-        if (e.target.tagName.toLowerCase() === 'textarea' && e.target.value.slice(-1) === '-') {
-            e.target.value = e.target.value.slice(0, -1); // Remove trailing '-'
+            var textarea = document.activeElement;
+            var selectedShortcutIndex = expandedUI.selectedIndex - 1; // Adjust for placeholder index.
+            if (selectedShortcutIndex >= 0 && selectedShortcutIndex < SHORTCUTS.length) {
+                var shortcut = SHORTCUTS[selectedShortcutIndex];
+                // Combine the selected shortcut content with the existing textarea content.
+                // Here, we ensure to add the existing textarea content after the selected shortcut content.
+                textarea.value = shortcut[1] + textarea.value;
 
-            var title = prompt('请输入标题:');
-            var content = prompt('请输入内容:');
-            if (title && content) {
-                SHORTCUTS.push([title, content]);
-                updateUI();
-                saveShortcuts();
+                // Dispatch an input event on the textarea to ensure any bound handlers are triggered.
+                textarea.dispatchEvent(new Event('input', { bubbles: true }));
             }
         }
     });
