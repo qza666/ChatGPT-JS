@@ -1,22 +1,3 @@
-// ==UserScript==
-// @name               ChatGPT-Hydrotho & 亦安
-// @name:zh-CN         ChatGPT-Hydrotho & 亦安
-// @namespace          https://github.com/hydrotho
-// @version            2.1.8
-// @description:zh-CN  通过Hydrotho大佬提供的模型切换器来破解GPT-4.0的频率限制再结合我的自定义角色，实现自定义角色破解4.0的限制。
-// @author             Hydrotho & 亦安
-// @license            MIT
-// @copyright          2024, 亦安
-// @icon               https://chatgpt.00web.xyz/icon.png
-// @supportURL         https://t.me/yian99
-// @match              http*://chat.00web.xyz/*
-// @require            https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js#sha256-SWMQFEHe1+QgwFZl58YWsvLjhRyZ4c+K+E0p1vEOd9o=
-// @grant              none
-// @description 通过Hydrotho大佬提供的模型切换器来破解GPT-4.0的频率限制再结合我的自定义角色，实现自定义角色破解4.0的限制。
-// @downloadURL https://update.greasyfork.org/scripts/489458/ChatGPT-Hydrotho%20%20%E4%BA%A6%E5%AE%89.user.js
-// @updateURL https://update.greasyfork.org/scripts/489458/ChatGPT-Hydrotho%20%20%E4%BA%A6%E5%AE%89.meta.js
-// ==/UserScript==
-
 (function () {
     'use strict';
     if (document.querySelector('#integratedChatGPTUIContainer')) return;
