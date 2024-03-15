@@ -50,7 +50,6 @@
         align-items: center;
         gap: 10px;
         position: fixed;
-        top: 200px;
         transform: translateX(-50%);
         padding: 10px 20px;
         background-color: #ffffff;
