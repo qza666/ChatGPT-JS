@@ -41,22 +41,26 @@
         });
     }
 
-    // UI容器
-    var uiContainer = document.createElement('div');
-    uiContainer.id = 'integratedChatGPTUIContainer';
-    uiContainer.style.cssText = `
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        position: fixed;
-        transform: translateX(-50%);
-        padding: 10px 20px;
-        background-color: #ffffff;
-        border-radius: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        z-index: 10000;
-    `;
+// UI container
+var uiContainer = document.createElement('div');
+uiContainer.id = 'integratedChatGPTUIContainer';
+uiContainer.style.cssText = `
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    left: 0; // Align to the left side
+    bottom: 0; // Align to the bottom
+    margin-bottom: 200px; // Set bottom margin
+    transform: translateY(50%); // Adjust vertical position
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+`;
+
 
     // 下拉菜单
     var expandedUI = document.createElement('select');
