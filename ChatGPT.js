@@ -50,6 +50,8 @@
         align-items: center;
         gap: 10px;
         position: fixed;
+        top: 10px;
+        left: 50%;
         transform: translateX(-50%);
         padding: 10px 20px;
         background-color: #ffffff;
@@ -57,8 +59,6 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         z-index: 10000;
     `;
-
-
 
     // 下拉菜单
     var expandedUI = document.createElement('select');
