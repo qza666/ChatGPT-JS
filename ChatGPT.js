@@ -36,7 +36,6 @@ uiContainer.style.cssText = `
     gap: 10px;
     position: fixed;
     bottom: 5%; /* 1/12th of the vertical height */
-    left: 12%; /* 1/7th of the horizontal width */
     padding: 10px 20px;
     background-color: #ffffff;
     border-radius: 20px;
