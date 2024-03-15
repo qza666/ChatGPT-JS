@@ -43,6 +43,7 @@
         border-radius: 20px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         z-index: 10000;
+        margin-bottom: 100px;
     `;
     var expandedUI = document.createElement('select');
     expandedUI.id = 'integratedChatGPTUI';
