@@ -29,22 +29,21 @@
     }
     var uiContainer = document.createElement('div');
     uiContainer.id = 'integratedChatGPTUIContainer';
-    uiContainer.style.cssText = `
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        position: fixed;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 10px 20px;
-        background-color: #ffffff;
-        border-radius: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        z-index: 10000;
-        margin-bottom: 100px;
-    `;
+uiContainer.style.cssText = `
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    bottom: 8.33%; /* 1/12th of the vertical height */
+    left: 14.29%; /* 1/7th of the horizontal width */
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10000;
+`;
+
     var expandedUI = document.createElement('select');
     expandedUI.id = 'integratedChatGPTUI';
     expandedUI.style.cssText = `
