@@ -17,15 +17,19 @@
     }
 
     function refreshDropdown() {
-        // Clear all options except the placeholder
         for (let i = expandedUI.options.length - 1; i > 0; i--) {
             expandedUI.remove(i);
         }
-        // Re-add shortcuts to the dropdown
         SHORTCUTS.forEach(function(shortcut) {
             var option = new Option(shortcut[0], shortcut[0]);
             expandedUI.add(option);
         });
+    }
+
+    function resetShortcuts() {
+        SHORTCUTS = []; // 重置 SHORTCUTS 数组
+        saveShortcuts(); // 清空 localStorage 中的 SHORTCUTS
+        refreshDropdown(); // 刷新下拉列表
     }
 
     var uiContainer = document.createElement('div');
@@ -107,29 +111,41 @@
         }
     };
 
+    var resetButton = document.createElement('button');
+    resetButton.textContent = '重置';
+    resetButton.style.cssText = `
+        background-color: #28a745;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    `;
+    resetButton.onclick = resetShortcuts;
+
     uiContainer.appendChild(expandedUI);
     uiContainer.appendChild(addButton);
     uiContainer.appendChild(deleteButton);
+    uiContainer.appendChild(resetButton);
     document.body.appendChild(uiContainer);
 
     document.addEventListener('keydown', function(e) {
         if (e.key === '.' && document.activeElement.tagName === 'TEXTAREA') {
-            e.preventDefault(); // Prevent the default dot key action.
+            e.preventDefault();
 
             var textarea = document.activeElement;
-            var selectedShortcutIndex = expandedUI.selectedIndex - 1; // Adjust for placeholder index.
+            var selectedShortcutIndex = expandedUI.selectedIndex - 1;
             if (selectedShortcutIndex >= 0 && selectedShortcutIndex < SHORTCUTS.length) {
                 var shortcut = SHORTCUTS[selectedShortcutIndex];
-                // Combine the selected shortcut content with the existing textarea content.
-                // Here, we ensure to add the existing textarea content after the selected shortcut content.
                 textarea.value = shortcut[1] + textarea.value;
 
-                // Dispatch an input event on the textarea to ensure any bound handlers are triggered.
                 textarea.dispatchEvent(new Event('input', { bubbles: true }));
             }
         }
     });
 })();
+
 
 
 (function (vue) {
